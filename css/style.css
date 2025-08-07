@@ -1,7 +1,7 @@
 @font-face {
     font-family: "HeiseiMinchoStd";
     font-weight: normal;
-    src: url(https://yamaguchisensei.com/assets/font/HeiseiMinchoStd/HeiseiMinchoStd-W3.otf) format("opentype");
+    src: url(https://fonts.adobe.com/fonts/heisei-mincho-std) format("opentype");
 }
 
 :root {
@@ -9,7 +9,7 @@
 }
 
 body {
-    font-family: var(--font-heisei-mincho-std);
+    font-family: var(--font-heisei-mincho-std) !important;
     text-align: center;
     padding: 20px;
     margin: 0;
@@ -60,7 +60,7 @@ body {
 #menu {
     display: grid;
     grid-template-columns: repeat(3, 0fr);
-    gap: 40px;
+    /* gap: 40px; */
     justify-content: center;
     align-items: start;
     justify-items: center;
@@ -168,7 +168,7 @@ body {
 
 button {
     padding: 12px 20px;
-    font-size: 18px;
+    font-size: 15px;
     width: 250px;
     height: 100px;
     background-image: radial-gradient(69.06% 69.06% at 40.17% 35.17%, rgba(255, 249, 246, 0.95) 0%, rgba(244, 212, 192, 0.95) 68.5%, rgba(244, 182, 155, 0.95) 93.5%);
@@ -181,7 +181,7 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content:flex-end;
     line-height: 1.2;
 }
 
@@ -232,4 +232,44 @@ video {
     /* Match the button's border radius */
     pointer-events: none;
     /* Allow clicks to pass through to the disabled button */
+}
+
+
+.swiper-button-next:after,
+.swiper-rtl .swiper-button-prev:after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 60px;
+    background-image: url(../images/right-arrow.PNG);
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-left: -20px;
+}
+
+.swiper-button-prev:after,
+.swiper-rtl .swiper-button-next:after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 60px;
+    background-image: url(../images/right-arrow.PNG);
+    transform: rotate(180deg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-right: -20px;
+}
+
+
+
+/* ======================================================= */
+
+.card-list .card-item::after {
+    content: "";
+    height: 100%;
+    width: 3px;
+    background-color: #e5ccae;
+    position: absolute;
+    top: 0;
+    left: 100%;
 }
