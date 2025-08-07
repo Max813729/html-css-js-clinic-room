@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>リゾナスムービー</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <style>
+    @font-face {
+        font-family: "HeiseiMinchoStd";
+        font-weight: normal;
+        src: url(https://yamaguchisensei.com/assets/font/HeiseiMinchoStd/HeiseiMinchoStd-W3.otf) format("opentype");
+    }
+
+    :root {
+	    --font-heisei-mincho-std: HeiseiMinchoStd, serif;
+    }
+
+    body {
+      font-family: var(--font-heisei-mincho-std);
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+      overflow-x: hidden; /* Allow vertical scrolling */
+      overflow-y: auto;
+      color: rgba(33, 29, 26, 0.8);
+      height: 100%;
+    }
+    #background-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      opacity: 0.6;
+    }
+    .header-container {
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 16px 8px;
+      border-radius: 10px;
+      max-width: 1000px;
+      margin: 0 auto;
+      margin-bottom: 32px;
+      /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); */
+    }
+    
+    .header-container h2 {
+      font-size: 1.4rem;
+      font-weight: normal;
+      margin: 0;
+      margin-bottom: 4px;
+      color: rgba(33, 29, 26, 0.8);
+    }
+    
+    .header-container h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 0;
+      line-height: 1.5;
+      color: rgba(33, 29, 26, 0.9);
+    }
+    #menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      justify-content: center;
+      align-items: start;
+      justify-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      margin-bottom: 40px; /* Add space at the bottom */
+      padding: 16px 8px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      min-height: 65vh;
+      max-height: 70vh; /* Limit height */
+      overflow-y: auto; /* Enable scrolling inside the menu */
+    }
+    
+    /* Add scrollbar styling */
+    #menu::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    #menu::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+    }
+    
+    #menu::-webkit-scrollbar-thumb {
+      background: rgba(244, 212, 192, 0.8);
+      border-radius: 10px;
+    }
+    
+    #menu::-webkit-scrollbar-thumb:hover {
+      background: rgba(244, 182, 155, 0.9);
+    }
+
+    .submenu {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 24px;
+      justify-content: center;
+      align-items: center;
+      justify-items: center;
+    }
+
+    #video-container {
+      display: none;
+      justify-content: center;
+      align-items: center; 
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+      opacity: 0;
+      transform: scale(0.3);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #video-container.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    #video {
+      width: 100%;
+      height: auto;
+    }
+
+    #close-button {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      left: auto;
+      z-index: 10;
+    }
+    #close-button.center {
+      top: 40%;
+      left: 50%;
+      right: auto;
+      animation: pulse 1.5s infinite alternate;
+    }
+    #close-button button {
+      width: 120px;
+      height: 45px;
+      border-radius: 99999px;
+    }
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 20px;
+      width: 360px;
+      height: 100px;
+      background-image: radial-gradient(69.06% 69.06% at 40.17% 35.17%, rgba(255, 249, 246, 0.95) 0%, rgba(244, 212, 192, 0.95) 68.5%, rgba(244, 182, 155, 0.95) 93.5%);
+      border: none;
+      border-radius: 24px;
+      color: rgba(33, 29, 26, 0.9);
+      font-weight: 600;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.2;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+    }
+    button span {
+      font-size: 18px;
+      font-weight: normal;
+      margin-top: 4px;
+      color: rgba(33, 29, 26, 0.7);
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #video-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .button-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .coming-soon-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4); /* Semi-transparent black background */
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 99999px; /* Match the button's border radius */
+      pointer-events: none; /* Allow clicks to pass through to the disabled button */
+    }
+  </style>
+</head>
+<body>
+  <video id="background-video" autoplay muted loop>
+    <source src="https://clinicvideos.b-cdn.net/opening.mp4" type="video/mp4">
+    お使いのブラウザは動画をサポートしていません。
+  </video>
+
+  <div class="header-container">
+    <h2>ようこそ、リゾナスフェイスクリニック東京へ！</h2>
+    <h1>お待ちいただいている間に、<br>クリニック限定動画をお楽しみいただけます。</h1>
+  </div>
+  
+  <div id="menu">
+    <div class="submenu">
+      <div class="button-container">
+        <button onclick="playVideo('https://clinicvideos.b-cdn.net/doctor2_1.mp4')">何から始めたらいいの？<br/>コスパの良い施術の組み立て方<span>松浦医師 (3分)</span></button>
+      </div>
+      <div class="button-container">
+        <button  onclick="playVideo('https://clinicvideos.b-cdn.net/doctor2_2.mov')">目の下のクマ<span>松浦医師 (7分)</span></button>
+      </div>
+      <div class="button-container">
+        <button  onclick="playVideo('https://clinicvideos.b-cdn.net/doctor2_3_v2.mov')">目の上のたるみ<span>松浦医師 (6分)</span></button>
+      </div>
+      <div class="button-container">
+        <button  onclick="playVideo('https://clinicvideos.b-cdn.net/doctor2_4.mp4')">手の若返り<span>松浦医師 (5分)</span></button>
+      </div>
+    </div>
+    <div class="submenu">
+      <div class="button-container">
+        <button  onclick="playVideo('https://clinicvideos.b-cdn.net/doctor5_1.mov')">術前ビジュアルカウンセリング<span>AYAKA (3分)</span></button>
+      </div>
+      <div class="button-container">
+        <button  onclick="playVideo('https://clinicvideos.b-cdn.net/doctor5_2.mov')">ダウンタイムカバーメイク<span>AYAKA (4分)</span></button>
+      </div>
+      <div class="button-container">
+        <button  onclick="playVideo('https://clinicvideos.b-cdn.net/doctor5_3.mov')">術後ビジュアルメイク<span>AYAKA (3分)</span></button>
+      </div>
+      <div class="button-container">
+        <button  onclick="playVideo('https://clinicvideos.b-cdn.net/doctor5_4.mov')">パーソナルカラー診断<span>AYAKA (3分)</span></button>
+      </div>
+      <div class="button-container">
+        <button  onclick="playVideo('https://clinicvideos.b-cdn.net/doctor5_7.mov')">医療アートメイク<span>AYAKA (3分)</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="video-container">
+    <video id="video" controls="false" playsinline preload="metadata"></video>
+    <div id="close-button">
+      <button onclick="shrinkVideoContainer()">閉じる</button>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log("Service Worker registered."))
+        .catch(err => console.error("SW registration failed:", err));
+    }
+
+    const video = document.getElementById('video');
+    const menu = document.getElementById('menu');
+    const container = document.getElementById('video-container');
+    const closeBtn = document.getElementById('close-button');
+
+    function playVideo(file) {
+      menu.style.display = 'none';
+      container.style.display = 'flex';
+      setTimeout(() => container.classList.add('show'), 10);
+      container.classList.remove('shrink');
+      closeBtn.classList.remove('center');
+      video.src = file;
+      video.play();
+      video.disablePictureInPicture = true;
+      video.controlsList = 'nodownload nofullscreen noremoteplayback';
+      video.onplay = () => {
+        closeBtn.classList.remove('center');
+        video.style.opacity = 1;
+      };
+      video.onended = () => {
+        closeBtn.classList.add('center');
+        video.style.opacity = 0.9;
+      };
+      video.onpause = () => {
+        // Only show center close button if not at the end or if manually paused
+        if (!video.ended) {
+          closeBtn.classList.add('center');
+          video.style.opacity = 0.9;
+        }
+      };
+    }
+
+    function shrinkVideoContainer() {
+      closeBtn.classList.remove('center');
+      video.pause();
+      video.src = '';
+      container.classList.remove('show');
+      setTimeout(() => {
+        container.style.display = 'none';
+        menu.style.display = 'grid';
+      }, 300);
+    }
+  </script>
+</body>
+</html>
