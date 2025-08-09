@@ -1,0 +1,270 @@
+@import url(https://fonts.bunny.net/css?family=abel:400);
+
+@layer base, cards;
+
+@layer cards {
+    :root {
+        --card-count: 5;
+        --carousel-duration: 60s;
+        --carousel-depth: 220px;
+        --card-width: 120px;
+        --card-height: 150px;
+        --toggle-txt-off: "\2195";
+        --toggle-txt-on: "\2194";
+        --toggle-bg: rgb(0, 105, 168);
+        --toggle-bg-hover: rgb(124, 207, 0);
+        --toggle-timing-function: linear(0,
+                0.03 1.5%,
+                0.121 3.2%,
+                0.851 13%,
+                0.99 16.4%,
+                1.063 20.2%,
+                1.076 22.3%,
+                1.075 24.8%,
+                1.013 35.9%,
+                0.995 43.4%,
+                1);
+    }
+
+    @media (width > 600px) {
+        :root {
+            /* --carousel-depth: 330px;
+            --card-width: 180px;
+            --card-height: 220px; */
+            --carousel-depth: 120px;
+            --card-width: 100px;
+            --card-height: 67px;
+        }
+    }
+
+    body {
+        perspective: 1000px;
+        overflow: hidden;
+    }
+
+    .carousel {
+        transform-style: preserve-3d;
+
+        /* demo - place carousel*/
+        position: absolute;
+        inset: 0;
+        margin: auto;
+
+        /* pause carsousel when card gets hover */
+        &:has(> .card:hover) .card {
+            animation-play-state: paused;
+        }
+
+        /* toggle switch to change carousel direction */
+        &>.direction-toggle {
+            position: absolute;
+            top: 1rem;
+            left: 50%;
+            translate: -50% 0;
+            border: 1px solid rgb(69 85 108);
+            border-radius: 4px;
+            padding: 0.25rem;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            place-items: center;
+            gap: 0.5rem;
+
+            &::before,
+            &::after {
+                content: var(--toggle-txt-off);
+                font-size: 1rem;
+                padding: 0.25em 0.5em;
+            }
+
+            &::after {
+                content: var(--toggle-txt-on);
+            }
+
+            & input {
+                position: absolute;
+                z-index: -1;
+                inset: 0 50% 0 0;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                outline: none;
+                border: none;
+                border-radius: 3px;
+                background-color: var(--toggle-bg);
+                transition: inset 500ms var(--toggle-timing-function),
+                    background 150ms ease-in-out;
+
+                &:checked {
+                    inset: 0 0 0 50%;
+                }
+
+                &:is(:hover, :focus-visible) {
+                    background-color: var(--toggle-bg-hover);
+                }
+            }
+        }
+
+        &:has(input:checked)>.card {
+            animation-name: orbit-x;
+        }
+    }
+
+    .card {
+        --angle: calc((360deg / var(--card-count)) * var(--i));
+        --delay: calc((-1 * var(--carousel-duration) / var(--card-count)) * var(--i));
+
+        &:nth-child(1) {
+            --i: 1;
+        }
+
+        &:nth-child(2) {
+            --i: 2;
+        }
+
+        &:nth-child(3) {
+            --i: 3;
+        }
+
+        &:nth-child(4) {
+            --i: 4;
+        }
+
+        &:nth-child(5) {
+            --i: 5;
+        }
+
+        &:nth-child(6) {
+            --i: 6;
+        }
+
+        &:nth-child(7) {
+            --i: 7;
+        }
+
+        &:nth-child(8) {
+            --i: 8;
+        }
+
+        &:nth-child(9) {
+            --i: 9;
+        }
+
+        &:nth-child(10) {
+            --i: 10;
+        }
+
+        position: absolute;
+        width: var(--card-width);
+        height: var(--card-height);
+        top: 50%;
+        left: 50%;
+        transform-style: preserve-3d;
+        transform: translate(-50%, -50%) rotateY(var(--angle)) translateZ(var(--carousel-depth));
+        background: steelblue;
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        opacity: 1;
+        scale: 1;
+
+        display: grid;
+        place-content: center;
+
+        animation-name: orbit-y;
+        animation-duration: var(--carousel-duration);
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-delay: var(--delay);
+    }
+
+    /* rotation animation - for this version we rotate each card, this allows us more flexibility than rotating the container */
+    /* rotation - vertical */
+    @keyframes orbit-y {
+        0% {
+            transform: translate(-50%, -50%) rotateX(0deg) translateZ(var(--carousel-depth));
+            opacity: 1;
+            scale: 1;
+        }
+
+        25%,
+        75% {
+            opacity: 0.6;
+            scale: 0.85;
+        }
+
+        50% {
+            opacity: 0.4;
+            scale: 0.75;
+        }
+
+        100% {
+            transform: translate(-50%, -50%) rotateX(360deg) translateZ(var(--carousel-depth));
+            opacity: 1;
+            scale: 1;
+        }
+    }
+
+    /* rotation - horizontal */
+    @keyframes orbit-x {
+        0% {
+            transform: translate(-50%, -50%) rotateY(0deg) translateZ(var(--carousel-depth));
+            opacity: 1;
+            scale: 1;
+        }
+
+        25%,
+        75% {
+            opacity: 0.75;
+            scale: 0.85;
+        }
+
+        50% {
+            opacity: 0.4;
+            scale: 0.75;
+        }
+
+        100% {
+            transform: translate(-50%, -50%) rotateY(360deg) translateZ(var(--carousel-depth));
+            opacity: 1;
+            scale: 1;
+        }
+    }
+}
+
+/* general styling not relevant for this demo */
+@layer base {
+    * {
+        box-sizing: border-box;
+    }
+
+    :root {
+        color-scheme: light dark;
+        --bg-dark: rgb(24, 24, 27);
+        --bg-light: rgb(231, 229, 228);
+
+        --txt-light: rgb(10, 10, 10);
+        --txt-dark: rgb(245, 245, 245);
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-timeline: --page-scroll block;
+        scroll-timeline: --page-scroll vertical;
+        /* Firefox supports the older "vertical" syntax */
+    }
+
+    body {
+        background-color: light-dark(var(--bg-light), var(--bg-dark));
+        color: light-dark(var(--txt-light), var(--txt-dark));
+        min-height: 100svh;
+        margin: 0;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-family: "Abel", sans-serif;
+        line-height: 1.5;
+        display: grid;
+        place-content: center;
+        gap: 1rem;
+    }
+}
